@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 import re
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 intents = discord.Intents.default() #intents 是要求的權限
 intents.message_content = True
@@ -42,4 +42,4 @@ async def on_message(message): #有新的訊息便會呼叫
         await message.channel.send(response)
         print(message.content[1:])
 
-client.run('MTA3MDQwMzQ0NzQ2NTE4OTM5Ng.Gs8xcX.LKoQoTexluI9R1DwtEoCWUOnW2VZypN9Rkvawc')
+client.run('MTA3MDQwMzQ0NzQ2NTE4OTM5Ng.GWMPbq.ibq0tZQGGjTojvXZUqIa7fDpFC3g5mdbp8tNng')
