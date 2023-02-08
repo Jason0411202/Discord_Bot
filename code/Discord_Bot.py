@@ -281,8 +281,12 @@ def Bus_Check():
                             return_Message=return_Message+'主人主人~有一班 **7309公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，時間還久，可以再陪一下バニラ玩嗎?~\n\n'
                     except:
                         try:
-                            if(item['StopStatus'])==1:
+                            if item['StopStatus']==1:
                                 return_Message=return_Message+'诶~ 有一班 **7309公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?\n\n'
+                            elif item['StopStatus']==3:
+                                return_Message=return_Message+'啊~ **7309公車** 末班車已經開走了，要不要明天再回去呢?\n\n'
+                            elif item['StopStatus']==4:
+                                return_Message=return_Message+'喵~ 今天 **7309公車** 沒有營運喔，連公車都休息了，主人也要好好放鬆一下喔~\n\n'
                         except:
                             return_Message=return_Message+'嗚...偶現在找不到 **7309公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~\n\n'
             if flag==0:
@@ -315,8 +319,12 @@ def Bus_Check():
                             return_Message=return_Message+'主人主人~有一班 **7306公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，時間還久，可以再陪一下バニラ玩嗎?~\n\n'
                     except:
                         try:
-                            if(item['StopStatus'])==1:
+                            if item['StopStatus']==1:
                                 return_Message=return_Message+'诶~ 有一班 **7306公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?\n\n'
+                            elif item['StopStatus']==3:
+                                return_Message=return_Message+'啊~ **7306公車** 末班車已經開走了，要不要明天再回去呢?\n\n'
+                            elif item['StopStatus']==4:
+                                return_Message=return_Message+'喵~ 今天 **7306公車** 沒有營運喔，連公車都休息了，主人也要好好放鬆一下喔~\n\n'
                         except:
                             return_Message=return_Message+'嗚...偶現在找不到 **7306公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~\n\n'
             if flag==0:
@@ -349,8 +357,12 @@ def Bus_Check():
                             return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，時間還久，可以再陪一下バニラ玩嗎?~\n\n'
                     except:
                         try:
-                            if(item['StopStatus'])==1:
+                            if item['StopStatus']==1:
                                 return_Message=return_Message+'诶~ 有一班 **106公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?\n\n'
+                            elif item['StopStatus']==3:
+                                return_Message=return_Message+'啊~ **106公車** 末班車已經開走了，要不要明天再回去呢?\n\n'
+                            elif item['StopStatus']==4:
+                                return_Message=return_Message+'喵~ 今天 **106公車** 沒有營運喔，連公車都休息了，主人也要好好放鬆一下喔~\n\n'
                         except:
                             return_Message=return_Message+'嗚...偶現在找不到 **106公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~\n\n'
             if flag==0:
