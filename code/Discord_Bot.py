@@ -256,13 +256,16 @@ def Bus_Check():
     }
 
     # 資料來源: https://tdx.transportdata.tw/api-service/swagger/basic/2998e851-81d0-40f5-b26d-77e2f5ac4118#/CityBus/CityBusApi_EstimatedTimeOfArrival_UDP_2048_1 「取得指定路線名稱的公路客運預估到站資料」API
-    # 說明: https://ptx.transportdata.tw/MOTC/#/CityBus/CityBusApi_EstimatedTimeOfArrival_UDP_2048_1                 
+    # 說明: https://ptx.transportdata.tw/MOTC/#/CityBus/CityBusApi_EstimatedTimeOfArrival_UDP_2048_1
+                 
     response=requests.get('https://tdx.transportdata.tw/api/basic/v2/Bus/EstimatedTimeOfArrival/Streaming/InterCity/7309?%24top=300&%24format=JSON',headers=head) # 取得7309公車資訊
     if response.status_code==200: # 若登入成功
         try:
             data=response.json()
+            flag=0
             for item in data:
                 if item['StopName']['Zh_tw']=='中正大學' and item['Direction']==1: # item['StopName']['Zh_tw']為站名，item['Direction']為行駛方向
+                    flag+=1
                     try:
                         estimateTime=datetime.timedelta(seconds=item['EstimateTime'])
                         hours,remainder=divmod(estimateTime.seconds,3600)
@@ -282,6 +285,8 @@ def Bus_Check():
                                 return_Message=return_Message+'诶~ 有一班 **7309公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?\n\n'
                         except:
                             return_Message=return_Message+'嗚...偶現在找不到 **7309公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~\n\n'
+            if flag==0:
+                return_Message=return_Message+'嗚...突然找不到 **7309公車** 的相關資訊了，等等再問偶可以嗎~\n\n'
         except:
             return_Message=return_Message+'嗚... **7309公車** 的網站格式好像改了耶，主人教教我怎麼辦~\n\n'
     else:
@@ -291,8 +296,10 @@ def Bus_Check():
     if response.status_code==200: # 若登入成功
         try:
             data=response.json()
+            flag=0
             for item in data:
                 if item['StopName']['Zh_tw']=='中正大學' and item['Direction']==0: # item['StopName']['Zh_tw']為站名，item['Direction']為行駛方向
+                    flag+=1
                     try:
                         estimateTime=datetime.timedelta(seconds=item['EstimateTime'])
                         hours,remainder=divmod(estimateTime.seconds,3600)
@@ -312,8 +319,10 @@ def Bus_Check():
                                 return_Message=return_Message+'诶~ 有一班 **7306公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?\n\n'
                         except:
                             return_Message=return_Message+'嗚...偶現在找不到 **7306公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~\n\n'
+            if flag==0:
+                return_Message=return_Message+'嗚...突然找不到 **7306公車** 的相關資訊了，等等再問偶可以嗎~\n\n'
         except:
-            return_Message=return_Message+'嗚... **7309公車** 的網站格式好像改了耶，主人教教我怎麼辦~\n\n'
+            return_Message=return_Message+'嗚... **7306公車** 的網站格式好像改了耶，主人教教我怎麼辦~\n\n'
     else:
         return_Message=return_Message+'嗚...偶今天可能問太多次，所以網站不理偶了。如果明天也這樣的話，可能就是網站已經停止服務了喔 ~喵\n\n'
 
@@ -321,32 +330,40 @@ def Bus_Check():
     if response.status_code==200: # 若登入成功
         try:
             data=response.json()
+            flag=0
             for item in data:
                 if item['StopName']['Zh_tw']=='中正大學' and item['Direction']==0: # item['StopName']['Zh_tw']為站名，item['Direction']為行駛方向
+                    flag+=1
                     try:
                         estimateTime=datetime.timedelta(seconds=item['EstimateTime'])
                         hours,remainder=divmod(estimateTime.seconds,3600)
                         minutes,seconds=divmod(remainder,60)
 
                         if item['EstimateTime']<=900: # 剩15分鐘到站
-                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站只剩 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** 了，現在才出門搭這班可能有點來不及了，バニラ陪您等下一班吧~'
+                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站只剩 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** 了，現在才出門搭這班可能有點來不及了，バニラ陪您等下一班吧~\n\n'
                         elif item['EstimateTime']<=1800: # 剩30分鐘到站
-                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，現在出門剛剛好耶，記得帶上バニラ喔~'
+                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，現在出門剛剛好耶，記得帶上バニラ喔~\n\n'
                         elif item['EstimateTime']<=1800: # 剩1小時到站
-                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，可以開始準備收拾東西囉，バニラ也來幫您~'
+                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，可以開始準備收拾東西囉，バニラ也來幫您~\n\n'
                         else:
-                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，時間還久，可以再陪一下バニラ玩嗎?~'
+                            return_Message=return_Message+'主人主人~有一班 **106公車** 到站還有 **'+str(hours)+'小時'+str(minutes)+'分'+str(seconds)+'秒** ，時間還久，可以再陪一下バニラ玩嗎?~\n\n'
                     except:
                         try:
                             if(item['StopStatus'])==1:
-                                return_Message=return_Message+'诶~ 有一班 **106公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?'
+                                return_Message=return_Message+'诶~ 有一班 **106公車** 尚未發車耶，還要等好久喔，要不要先看看別班公車呢?\n\n'
                         except:
-                            return_Message=return_Message+'嗚...偶現在找不到 **106公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~'
+                            return_Message=return_Message+'嗚...偶現在找不到 **106公車** 的車輛狀況相關資訊耶，等等再問偶可以嗎~\n\n'
+            if flag==0:
+                return_Message=return_Message+'嗚...突然找不到 **106公車** 的相關資訊了，等等再問偶可以嗎~\n\n'
         except:
-            return_Message=return_Message+'嗚... **7309公車** 的網站格式好像改了耶，主人教教我怎麼辦~'
+            return_Message=return_Message+'嗚... **106公車** 的網站格式好像改了耶，主人教教我怎麼辦~\n\n'
     else:
-        return_Message=return_Message+'嗚...偶今天可能問太多次，所以網站不理偶了。如果明天也這樣的話，可能就是網站已經停止服務了喔 ~喵'
+        return_Message=return_Message+'嗚...偶今天可能問太多次，所以網站不理偶了。如果明天也這樣的話，可能就是網站已經停止服務了喔 ~喵\n\n'
 
+    return_Message=return_Message+'嗯...主人教我看的資料來源更新頻率沒有那麼高，最正確的資訊還請您查看以下網站呦 ~喵喵\n\n'
+    return_Message=return_Message+'喵! 這是 **7309公車** 的資訊:\nhttps://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=73090&rn=1605423228342\n\n'
+    return_Message=return_Message+'喵! 這是 **7306公車** 的資訊:\nhttps://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=73060&rn=1605423329294\n\n'
+    return_Message=return_Message+'喵! 這是 **106公車** 的資訊:\nhttps://www.taiwanbus.tw/eBUSPage/Query/QueryResult.aspx?rno=07460&rn=1669878703021\n\n'
     return return_Message
 
 @tasks.loop(seconds=60.0) #每60秒執行一次
