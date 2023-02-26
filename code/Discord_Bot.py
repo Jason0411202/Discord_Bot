@@ -15,6 +15,8 @@ client = discord.Client(intents=intents) #client是與discord連結的橋樑
 
 let_chat=0 #設定是否開啟聊天功能的bool變數
 schedule_List=list() #記事資料庫
+repeat_List=list() #固定時間提醒資料庫
+week_transform=['星期一','星期二','星期三','星期四','星期五','星期六','星期日'] #星期轉換
 
 def ChatGPT_Get_Context(question):
     response = openai.Completion.create(
@@ -68,8 +70,10 @@ def System_Commend(message,commend):
         return '點擊下方連結便可以下載mp3囉~記得感謝バニラ跟主人喔 ~喵喵\n'+'https://www.backupmp3.com/zh/?v='+videoID
     elif re.search(r'rem ',commend): # 記事功能
         return Schedule_Edit(message,commend)
+    elif re.search(r'rpt ',commend): #固定時間提醒功能
+        return Repeat_Edit(message,commend)
     elif commend=='help': #列出指令集
-        return '喵喵~你可以使用 System call+指令 就可以命令我喔~但是除了主人以外不可以瑟瑟~喵\n指令列表:\nchat :開啟聊天功能\n/chat :關閉聊天功能\nbus :查看公車時刻資訊\ntrain :查看火車時刻資訊\ndl YT影片連結 :下載youtube mp3\nrem add 年 月 日 時 分 備註(一定要寫) :新增記事\nrem ls :查看自己的記事\nrem del 編號 :刪除指定編號的記事\nhelp:查看指令集'
+        return '喵喵~你可以使用 System call+指令 就可以命令我喔~但是除了主人以外不可以瑟瑟~喵\n指令列表:\nchat :開啟聊天功能\n/chat :關閉聊天功能\nbus :查看公車時刻資訊\ntrain :查看火車時刻資訊\ndl YT影片連結 :下載youtube mp3\nrem add 年 月 日 時 分 備註(一定要寫) :新增記事\nrem ls :查看自己的記事\nrem del 編號 :刪除指定編號的記事\nrpt add d 備註(一定要寫) :新增每日提醒\nrpt add w 星期 備註(一定要寫) :新增每周提醒\nrpt add m 日 備註(一定要寫) :新增每月提醒\nrpt add y 月 日 備註(一定要寫) :新增每年提醒\nrpt ls :查看自己的提醒\nrpt del 編號 :刪除指定編號的提醒\nhelp:查看指令集'
     else:
         return '咦~偶聽不懂你的指令，可以為偶再說一次嗎? ~喵'
 
@@ -223,6 +227,156 @@ def Schedule_Edit(message,commend):
 
     return return_Message
 
+def Repeat_Edit(message,commend):
+    return_Message=''
+    input_Info=list(commend.split())
+
+    if len(input_Info)<2: #輸入不包含指令
+        return_Message=return_Message+'喵喵~您是不是忘記輸入指令了呢...偶看不懂QQ'
+    elif input_Info[1]!='add' and input_Info[1]!='ls' and input_Info[1]!='del': # 輸入的指令錯誤
+        return_Message=return_Message+'喵喵~您輸入的指令為 **'+input_Info[1]+'** ，記得只能透過**add**,**ls**,**del**其中一個指令來存取固定時間提醒資料庫喔~'
+    else: # 通過初步格式檢測
+        if input_Info[1]=='ls': # 輸入指令為ls
+            if len(input_Info)>2:
+                return_Message=return_Message+'指令後面不用再加東西了喔~不過好險我還是知道您的意思 ~喵\n'
+            counter=1
+            for i in repeat_List:
+                if i['author']==message.author.name:
+                    if i['type']=='d':
+                        return_Message=return_Message+str(counter)+'. ** 每天 '+i['author']+'** 要我記得提醒他 **'+i['remark']+'**\n'
+                    elif i['type']=='w':
+                        return_Message=return_Message+str(counter)+'. ** 每個'+week_transform[i['info'][0]]+' '+i['author']+'** 要我記得提醒他 **'+i['remark']+'**\n'
+                    elif i['type']=='m':
+                        return_Message=return_Message+str(counter)+'. ** 每個月的 '+str(i['info'][0])+'號 '+i['author']+'** 要我記得提醒他 **'+i['remark']+'**\n'
+                    elif i['type']=='y':
+                        return_Message=return_Message+str(counter)+'. ** 每年的 '+str(i['info'][0])+'月'+str(i['info'][1])+'號 '+i['author']+'** 要我記得提醒他 **'+i['remark']+'**\n'
+                    counter+=1
+            if counter>1:
+                return_Message=return_Message+'\n登登~之前請偶幫忙記的時間就是以上這些了~厲害吧 ~喵，主人快誇讚我'
+            else:
+                return_Message=return_Message+'目前的固定時間提醒資料庫中沒有任何事情喔~好開心...這樣主人就有更多時間可以陪陪バニラ了 ~喵~喵喵'
+        elif input_Info[1]=='add':
+            if len(input_Info)<3: # 少輸入某些資訊
+                return_Message=return_Message+'喵喵~您是不是少輸入了某些資訊呢...偶看不懂QQ\n記得每一項資訊都要正確輸入喔~'
+            elif input_Info[2]!='d' and input_Info[2]!='w' and input_Info[2]!='m' and input_Info[2]!='y':
+                return_Message=return_Message+'喵喵~您輸入的指令為 **'+input_Info[2]+'** ，記得新增提醒的指令類型只能是**d**,**w**,**m**,**y**其中一個喔~'
+            else:
+                if input_Info[2]=='d':
+                    if len(input_Info)<4:
+                        return_Message=return_Message+'喵喵~您是不是少輸入了某些資訊呢...偶看不懂QQ\n記得每一項資訊都要正確輸入喔~'
+                    elif len(input_Info)>4:
+                        return_Message=return_Message+'喵喵~您是不是多輸入了某些資訊呢...偶看不懂QQ\n欸對了喵~備註文字的敘述不可以有空格喔~'
+                    else:
+                        new_Repeat={}
+                        info=[]
+
+                        new_Repeat['type']='d'
+                        new_Repeat['info']=info
+                        new_Repeat['author']=message.author.name
+                        new_Repeat['remark']=input_Info[3]
+                        repeat_List.append(new_Repeat.copy())
+                        return_Message=return_Message+'バニラ記住了~\n以後 **每天** 偶會記得提醒 **'+new_Repeat['author']+' '+new_Repeat['remark']+'** 的~'
+                elif input_Info[2]=='w':
+                    if len(input_Info)<5:
+                        return_Message=return_Message+'喵喵~您是不是少輸入了某些資訊呢...偶看不懂QQ\n記得每一項資訊都要正確輸入喔~'
+                    elif len(input_Info)>5:
+                        return_Message=return_Message+'喵喵~您是不是多輸入了某些資訊呢...偶看不懂QQ\n欸對了喵~備註文字的敘述不可以有空格喔~'
+                    else:
+                        if not input_Info[3].isdigit():
+                            return_Message=return_Message+'喵喵~您輸入的星期為 **'+input_Info[3]+'** ，看起來不是數字呦~'
+                        elif int(input_Info[3])>7 or int(input_Info[3])<1:
+                            return_Message=return_Message+'喵喵~您輸入的星期為 **'+input_Info[3]+'** ，記得星期只能是 **1~7** 其中一個喔~'
+                        else:
+                            new_Repeat={}
+                            info=[]
+                            info.append(int(input_Info[3])-1)
+
+                            new_Repeat['type']='w'
+                            new_Repeat['info']=info
+                            new_Repeat['author']=message.author.name
+                            new_Repeat['remark']=input_Info[4]
+                            repeat_List.append(new_Repeat.copy())
+                            return_Message=return_Message+'バニラ記住了~\n以後 **每個'+week_transform[new_Repeat['info'][0]]+'** 偶會記得提醒 **'+new_Repeat['author']+' '+new_Repeat['remark']+'** 的~'
+                elif input_Info[2]=='m':
+                    if len(input_Info)<5:
+                        return_Message=return_Message+'喵喵~您是不是少輸入了某些資訊呢...偶看不懂QQ\n記得每一項資訊都要正確輸入喔~'
+                    elif len(input_Info)>5:
+                        return_Message=return_Message+'喵喵~您是不是多輸入了某些資訊呢...偶看不懂QQ\n欸對了喵~備註文字的敘述不可以有空格喔~'
+                    else:
+                        if not input_Info[3].isdigit():
+                            return_Message=return_Message+'喵喵~您輸入的日期為 **'+input_Info[3]+'** ，看起來不是數字呦~'
+                        elif int(input_Info[3])>31 or int(input_Info[3])<1:
+                            return_Message=return_Message+'喵喵~您輸入的日期為 **'+input_Info[3]+'** ，記得日期只能是 **1~31** 其中一個喔~'
+                        else:
+                            new_Repeat={}
+                            info=[]
+                            info.append(int(input_Info[3]))
+
+                            new_Repeat['type']='m'
+                            new_Repeat['info']=info
+                            new_Repeat['author']=message.author.name
+                            new_Repeat['remark']=input_Info[4]
+                            repeat_List.append(new_Repeat.copy())
+                            return_Message=return_Message+'バニラ記住了~\n以後 **每個月的 '+str(new_Repeat['info'][0])+'號** 偶會記得提醒 **'+new_Repeat['author']+' '+new_Repeat['remark']+'** 的~'
+                elif input_Info[2]=='y':
+                    if len(input_Info)<6:
+                        return_Message=return_Message+'喵喵~您是不是少輸入了某些資訊呢...偶看不懂QQ\n記得每一項資訊都要正確輸入喔~'
+                    elif len(input_Info)>6:
+                        return_Message=return_Message+'喵喵~您是不是多輸入了某些資訊呢...偶看不懂QQ\n欸對了喵~備註文字的敘述不可以有空格喔~'
+                    else:
+                        if not input_Info[3].isdigit():
+                            return_Message=return_Message+'喵喵~您輸入的月份為 **'+input_Info[3]+'** ，看起來不是數字呦~'
+                        elif int(input_Info[3])>12 or int(input_Info[3])<1:
+                            return_Message=return_Message+'喵喵~您輸入的月份為 **'+input_Info[3]+'** ，記得月份只能是 **1~12** 其中一個喔~'
+                        elif not input_Info[4].isdigit():
+                            return_Message=return_Message+'喵喵~您輸入的日期為 **'+input_Info[4]+'** ，看起來不是數字呦~'
+                        elif int(input_Info[4])>31 or int(input_Info[4])<1:
+                            return_Message=return_Message+'喵喵~您輸入的日期為 **'+input_Info[4]+'** ，記得日期只能是 **1~31** 其中一個喔~'
+                        elif not IsValidDate(2024,int(input_Info[3]),int(input_Info[4])):
+                            return_Message=return_Message+'喵喵~您輸入的日期為 **'+input_Info[3]+'月'+input_Info[4]+'日'+'** ，看起來不存在耶~'
+                        else:
+                            new_Repeat={}
+                            info=[]
+                            info.append(int(input_Info[3]))
+                            info.append(int(input_Info[4]))
+
+                            new_Repeat['type']='y'
+                            new_Repeat['info']=info
+                            new_Repeat['author']=message.author.name
+                            new_Repeat['remark']=input_Info[5]
+                            repeat_List.append(new_Repeat.copy())
+                            return_Message=return_Message+'バニラ記住了~\n以後 **每年的 '+str(new_Repeat['info'][0])+'月'+str(new_Repeat['info'][1])+'號** 偶會記得提醒 **'+new_Repeat['author']+' '+new_Repeat['remark']+'** 的~'
+        elif input_Info[1]=='del':
+            if len(input_Info)==2: # 未指定提醒編號
+                return_Message=return_Message+'喵~您要記得指定欲刪除提醒的編號，這樣偶才知道要刪除哪一筆喔'
+            elif not input_Info[2].isdigit(): # 指定的刪除編號非數字
+                return_Message=return_Message+'喵~您指定的刪除編號為 **'+input_Info[2]+'** ，好像不是數字耶，要不要再想想~\n'
+            else:
+                if len(input_Info)>3:
+                    return_Message=return_Message+'指定刪除的編號後面不用再加東西了喔~不過好險我還是知道您的意思 ~喵\n'
+
+                counter=1
+                delete_Success=0
+                for i in repeat_List:
+                    if i['author']==message.author.name:
+                        if counter==int(input_Info[2]):
+                            repeat_List.remove(i)
+                            delete_Success+=1
+                            break
+                        counter+=1
+                if delete_Success==1:
+                    if i['type']=='d':
+                        return_Message=return_Message+'**'+"喵喵~該筆資料已經刪除成功了喔**\n**每天 "+i['author']+"** 不用再 **"+i['remark']+"**了~"
+                    elif i['type']=='w':
+                        return_Message=return_Message+'**'+"喵喵~該筆資料已經刪除成功了喔**\n**每個"+week_transform[i['info'][0]]+" "+i['author']+"** 不用再 **"+i['remark']+"**了~"
+                    elif i['type']=='m':
+                        return_Message=return_Message+'**'+"喵喵~該筆資料已經刪除成功了喔**\n**每個月的 "+str(i['info'][0])+"號 "+i['author']+"** 不用再 **"+i['remark']+"**了~"
+                    elif i['type']=='y':
+                        return_Message=return_Message+'**'+"喵喵~該筆資料已經刪除成功了喔**\n**每年的 "+str(i['info'][0])+"月"+str(i['info'][1])+"日 "+i['author']+"** 不用再 **"+i['remark']+"**了~"
+                else:
+                    return_Message=return_Message+'嗚...偶找不到你說的那筆資料...喔對了，想查看編號的話使用**ls**指令就可以囉'
+    return return_Message
+
 def Schedule_Time_Check():
     return_Message=''
     now = datetime.datetime.now() #取得現在時間
@@ -248,6 +402,30 @@ def Schedule_Time_Check():
     else:
         return return_Message
 
+def Repeat_Time_Check():
+    return_message=''
+    now = datetime.datetime.now() #取得現在時間
+
+    send=0
+    for i in repeat_List:
+        if i['type']=='d' and now.hour==5 and now.minute==0:
+            return_message=return_message+'嗯嗯~主人睡飽了嗎? **'+i['author']+'** 要バニラ每天記得提醒他 **'+i['remark']+'** 喔~ 好累喔~主人再陪我睡一下啦 ~喵\n'
+            send+=1
+        elif i['type']=='w' and now.weekday()==i['info'][0] and now.hour==5 and now.minute==0:
+            return_message=return_message+'早啊~ **'+i['author']+'** ，今天是 **'+week_transform[now.weekday()]+'** ，您要記得 **'+i['remark']+'**哦~想起來了嗎 ~喵\n'
+            send+=1
+        elif i['type']=='m' and now.day==i['info'][0] and now.hour==5 and now.minute==0:
+            return_message=return_message+'欸~ 今天是 **'+str(now.month)+'月'+str(now.day)+'號** 呢~ 偶記得 **'+i['author']+'** 每個月的這個時候都要 **'+i['remark']+'**，要記得喔 ~喵\n'
+            send+=1
+        elif i['type']=='y' and now.month==i['info'][0] and now.day==i['info'][1] and now.hour==5 and now.minute==0:
+            return_message=return_message+'一年又過去了呢~ 每年的 **'+str(now.month)+'月'+str(now.day)+'號** 就是 **'+i['author']+' '+i['remark']+'** 的時候，謝謝主人這一年來的陪伴 ~喵喵\n'
+            send+=1
+    
+    if send==0:
+        return 'no event'
+    else:
+        return return_message
+
 def Bus_Check():
     return_Message=''
 
@@ -271,6 +449,11 @@ async def Time_Check():
     if schedule_Event!='no event':
         channel = discord.utils.get(client.get_all_channels(), name='バニラ的樂園') # 用頻道名定位想要發送訊息的那個頻道
         await channel.send(schedule_Event)
+    
+    repeat_Event=Repeat_Time_Check() #檢查是否有需固定時間提醒的清單
+    if repeat_Event!='no event':
+        channel = discord.utils.get(client.get_all_channels(), name='バニラ的樂園') # 用頻道名定位想要發送訊息的那個頻道
+        await channel.send(repeat_Event)
      
     if now.hour == 10 and now.minute == 0: # 設定指定時間傳送Codeforce比賽訊息
         channel = discord.utils.get(client.get_all_channels(), name='バニラ的樂園') # 用頻道名定位想要發送訊息的那個頻道
