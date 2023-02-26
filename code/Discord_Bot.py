@@ -388,13 +388,13 @@ def Schedule_Time_Check():
     send=0
     for i in schedule_List:
         if i['year']==now.year and i['month']==now.month and i['date']==now.day+1 and now.hour==6 and now.minute==0: #前一天的早上6點提醒
-            return_Message=return_Message+'**'+i['author']+'** 早呀~有睡飽嗎?\n**明天** 的 **'+str(i['hour'])+'點'+str(i['minute'])+'分** 要記得 **'+i['remark']+'** 哦 ~喵喵\n'
+            return_Message=return_Message+'**'+i['author']+'** 早呀~有睡飽嗎?\n**明天** 的 **'+str(i['hour'])+'點'+str(i['minute'])+'分** 要記得 **'+i['remark']+'** 哦 ~喵喵\n\n'
             send+=1
         elif i['year']==now.year and i['month']==now.month and i['date']==now.day and now.hour==6 and now.minute==0: #當天的早上6點提醒
-            return_Message=return_Message+'**'+i['author']+'** 早呀~有睡飽嗎?\n**今天** 的 **'+str(i['hour'])+'點'+str(i['minute'])+'分** 要記得 **'+i['remark']+'** 哦 ~喵喵\n'
+            return_Message=return_Message+'**'+i['author']+'** 早呀~有睡飽嗎?\n**今天** 的 **'+str(i['hour'])+'點'+str(i['minute'])+'分** 要記得 **'+i['remark']+'** 哦 ~喵喵\n\n'
             send+=1
         elif i['year']==now.year and i['month']==now.month and i['date']==now.day and i['hour']==now.hour+1 and i['minute']==now.minute: #當天的前一個小時提醒
-            return_Message=return_Message+'**'+i['author']+'** 哈囉~今天過的如何呀?\n**等一下** 的 **'+str(i['hour'])+'點'+str(i['minute'])+'分** 要記得 **'+i['remark']+'** 哦，祝您可以順利的完成這件事 ~喵喵\n'
+            return_Message=return_Message+'**'+i['author']+'** 哈囉~今天過的如何呀?\n**等一下** 的 **'+str(i['hour'])+'點'+str(i['minute'])+'分** 要記得 **'+i['remark']+'** 哦，祝您可以順利的完成這件事 ~喵喵\n\n'
             send+=1
 
     if send==0:
@@ -409,16 +409,16 @@ def Repeat_Time_Check():
     send=0
     for i in repeat_List:
         if i['type']=='d' and now.hour==5 and now.minute==0:
-            return_message=return_message+'嗯嗯~主人睡飽了嗎? **'+i['author']+'** 要バニラ每天記得提醒他 **'+i['remark']+'** 喔~ 好累喔~主人再陪我睡一下啦 ~喵\n'
+            return_message=return_message+'嗯嗯~主人睡飽了嗎? **'+i['author']+'** 要バニラ每天記得提醒他 **'+i['remark']+'** 喔~ 好累喔~主人再陪我睡一下啦 ~喵\n\n'
             send+=1
         elif i['type']=='w' and now.weekday()==i['info'][0] and now.hour==5 and now.minute==0:
-            return_message=return_message+'早啊~ **'+i['author']+'** ，今天是 **'+week_transform[now.weekday()]+'** ，您要記得 **'+i['remark']+'**哦~想起來了嗎 ~喵\n'
+            return_message=return_message+'早啊~ **'+i['author']+'** ，今天是 **'+week_transform[now.weekday()]+'** ，您要記得 **'+i['remark']+'**哦~想起來了嗎 ~喵\n\n'
             send+=1
         elif i['type']=='m' and now.day==i['info'][0] and now.hour==5 and now.minute==0:
-            return_message=return_message+'欸~ 今天是 **'+str(now.month)+'月'+str(now.day)+'號** 呢~ 偶記得 **'+i['author']+'** 每個月的這個時候都要 **'+i['remark']+'**，要記得喔 ~喵\n'
+            return_message=return_message+'欸~ 今天是 **'+str(now.month)+'月'+str(now.day)+'號** 呢~ 偶記得 **'+i['author']+'** 每個月的這個時候都要 **'+i['remark']+'**，要記得喔 ~喵\n\n'
             send+=1
         elif i['type']=='y' and now.month==i['info'][0] and now.day==i['info'][1] and now.hour==5 and now.minute==0:
-            return_message=return_message+'一年又過去了呢~ 每年的 **'+str(now.month)+'月'+str(now.day)+'號** 就是 **'+i['author']+' '+i['remark']+'** 的時候，謝謝主人這一年來的陪伴 ~喵喵\n'
+            return_message=return_message+'一年又過去了呢~ 每年的 **'+str(now.month)+'月'+str(now.day)+'號** 就是 **'+i['author']+' '+i['remark']+'** 的時候，謝謝主人這一年來的陪伴 ~喵喵\n\n'
             send+=1
     
     if send==0:
