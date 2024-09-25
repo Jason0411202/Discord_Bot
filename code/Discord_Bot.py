@@ -49,7 +49,7 @@ def System_Commend(message,commend):
         return '我很努力的幫您找資料，記得要感謝我噢~以下是往返 **民雄火車站** 及 **鳳山火車站**的火車發車資訊\n\n'+Train_Check()
     elif re.search(r'dl ',commend): # 下載youtube mp3功能
         videoID=commend[20:]
-        return '點擊下方連結便可以下載mp3囉~記得感謝バニラ跟作者喔 ~\n'+'https://www.backupmp3.com/zh/?v='+videoID
+        return '點擊下方連結便可以下載mp3囉~\n'+'https://www.backupmp3.com/zh/?v='+videoID
     elif re.search(r'rem ',commend): # 記事功能
         return Schedule_Edit(message,commend)
     elif re.search(r'rpt ',commend): #固定時間提醒功能
@@ -81,19 +81,19 @@ def Codeforce_Time_Check(): #負責在每天指定時間發有關Codeforce的訊
         today=datetime.date.today() # 取得今日時間
         codeforce_Data=Codeforce_Check() # 取得最近一場Codeforce比賽的時間(只有秒數)
         local_time = datetime.datetime.fromtimestamp(codeforce_Data['startTimeSeconds']) # 轉成日期形式
-        return_Message=return_Message+'作者~~還請您看這裡~\nバニラ每天都會很努力的為作者找找Codeforce的比賽資訊呦~\n'
+        return_Message=return_Message+'バニラ每天都會很努力的找找Codeforce的比賽資訊~\n'
         if today.month==local_time.month and today.day==local_time.day:
-            return_Message=return_Message+'啊~**今天的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶，作者要不要來呢?...嗯..バニラ也會陪在您身邊一起幫忙想的，一起努力吧 ~\n'
+            return_Message=return_Message+'啊~**今天的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶 ~\n'
         elif today.month==local_time.month and today.day+1==local_time.day:
-            return_Message=return_Message+'嗯~**明天的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶，作者做好準備了嗎?我相信作者一定可以的 ~\n'
+            return_Message=return_Message+'嗯~**明天的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶~\n'
         elif today.month==local_time.month and today.day+2==local_time.day:
-            return_Message=return_Message+'咦~我發現**後天的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶，作者如果累了的話，就先休息一下，明天再準備吧 ~\n'
+            return_Message=return_Message+'咦~我發現**後天的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶~\n'
         else:
-            return_Message=return_Message+'咦~我發現**好多天後的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶，時間還很久，作者可以先陪我玩嗎? ~\n'
+            return_Message=return_Message+'咦~我發現**好多天後的 '+str(local_time.hour)+'點'+str(local_time.minute)+'分** 剛好有一場 **'+codeforce_Data['name']+' **耶~\n'
         
         return_Message=return_Message+'詳細資訊還請上Codeforce官網查看喔~\nhttps://codeforces.com/contests'
     except:
-        return_Message=return_Message+'嗚...我突然找不到Codeforce的資料惹..作者對不起...'
+        return_Message=return_Message+'嗚...我突然找不到Codeforce的資料惹...'
     
     return return_Message
 
@@ -146,9 +146,9 @@ def Schedule_Edit(message,commend):
                     return_Message=return_Message+str(counter)+'. **'+str(i['year'])+'年'+str(i['month'])+'月'+str(i['date'])+'日 '+str(i['hour'])+'點'+str(i['minute'])+'分** **'+i['author']+'** 要我記得提醒他 **'+i['remark']+'**\n'
                     counter+=1
             if counter>1:
-                return_Message=return_Message+'\n登登~之前請偶幫忙記的時間就是以上這些了~厲害吧 ~，作者快誇讚我'
+                return_Message=return_Message+'\n登登~之前請偶幫忙記的時間就是以上這些了~厲害吧'
             else:
-                return_Message=return_Message+'目前的記事資料庫中沒有任何事情喔~好開心...這樣作者就有更多時間可以陪陪バニラ了 ~~'
+                return_Message=return_Message+'目前的記事資料庫中沒有任何事情喔~好開心...'
         elif input_Info[1]=='add': # 輸入指令為add
             if len(input_Info)<8: # 少輸入某些資訊
                 return_Message=return_Message+'~您是不是少輸入了某些資訊呢...偶看不懂QQ\n記得每一項資訊都要正確輸入喔~'
@@ -391,7 +391,7 @@ def Repeat_Time_Check():
     send=0
     for i in repeat_List:
         if i['type']=='d' and now.hour==5 and now.minute==0:
-            return_message=return_message+'嗯嗯~作者睡飽了嗎? **'+i['author']+'** 要バニラ每天記得提醒他 **'+i['remark']+' ~\n\n'
+            return_message=return_message+'嗯嗯~睡飽了嗎? **'+i['author']+'** 要バニラ每天記得提醒他 **'+i['remark']+' ~\n\n'
             send+=1
         elif i['type']=='w' and now.weekday()==i['info'][0] and now.hour==5 and now.minute==0:
             return_message=return_message+'早啊~ **'+i['author']+'** ，今天是 **'+week_transform[now.weekday()]+'** ，您要記得 **'+i['remark']+'**哦~想起來了嗎 ~\n\n'
